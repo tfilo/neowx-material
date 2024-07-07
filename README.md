@@ -1,3 +1,7 @@
+# This is fork of NeoWX Material
+
+This repository contains fork of this repository [neowx-material](https://github.com/neoground/neowx-material). It contains some customisations related to my needs.
+
 # NeoWX Material
 
 **The most versatile and modern weewx skin**

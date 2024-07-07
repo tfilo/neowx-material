@@ -59,6 +59,36 @@
           </div>
         </div>
 
+        #else if $name == 'lightning_strike_count'
+
+        <div class="row">
+          <div class="col-3 text-muted font-small"></div>
+          <div class="col-6">
+            <h4 class="h2-responsive">$week.lightning_strike_count.sum</h4>
+          </div>
+          <div class="col-3 text-muted font-small hi-text"></div>
+        </div>
+
+        #else if $name == 'windrun'
+
+        <div class="row">
+          <div class="col-3 text-muted font-small"></div>
+          <div class="col-6">
+            <h4 class="h2-responsive">$week.windrun.sum</h4>
+          </div>
+          <div class="col-3 text-muted font-small hi-text"></div>
+        </div>
+
+        #else if $name == 'ET'
+
+        <div class="row">
+          <div class="col-3 text-muted font-small"></div>
+          <div class="col-6">
+            <h4 class="h2-responsive">$week.ET.sum</h4>
+          </div>
+          <div class="col-3 text-muted font-small hi-text"></div>
+        </div>
+
         #else
 
         <div class="row">
@@ -131,7 +161,7 @@
       #for $x in $Extras.Appearance.values_order
 
       #if $x == "ET"
-        #if $week.ET.has_data and $week.ET.sum.raw is not None and $week.ET.sum.raw > 0.0
+        #if $week.ET.has_data and $week.ET.sum.raw != None and $week.ET.sum.raw > 0.0
           $valuesCard('ET')
         #end if
       #else
@@ -147,7 +177,7 @@
       #for $x in $Extras.Appearance.charts_order
 
       #if $x == "ET"
-        #if $week.ET.has_data and $week.ET.sum.raw is not None and $week.ET.sum.raw > 0.0
+        #if $week.ET.has_data and $week.ET.sum.raw != None and $week.ET.sum.raw > 0.0
           $chartCard($x, $x + 'chart')
         #end if
       #else
@@ -178,6 +208,12 @@
   #set current_interval = int($Extras.Charts.week_timespan)
   #if $name == "rain"
     #set current_interval = int($Extras.Charts.week_rain_timespan)
+  #end if
+  #if $name == "ET"
+    #set current_interval = int($Extras.Charts.week_ET_timespan)
+  #end if
+  #if $name == "windrun"
+    #set current_interval = int($Extras.Charts.week_windrun_timespan)
   #end if
 
   #for $record in $span($week_delta=1).spans(interval=current_interval)
@@ -285,6 +321,9 @@ new ApexCharts(document.querySelector('#$id'), {
   // Wind
   $getChartJsCode("windSpeed", "windSpeedchart", "area", "windSpeed", "windGust", "max")
 
+  // WindRun
+  $getChartJsCode("windrun", "windrunchart", "bar", "windrun", "", "sum")
+
   // outHumidity
   $getChartJsCode("outHumidity", "outHumiditychart", "area", "outHumidity")
 
@@ -293,8 +332,8 @@ new ApexCharts(document.querySelector('#$id'), {
   $getChartJsCode("UV", "UVchart", "area", "UV", "", "max")
   #end if
 
-  #if $week.ET.has_data and $week.ET.sum.raw is not None and $week.ET.sum.raw > 0.0
-  $getChartJsCode("ET", "ETchart", "area", "ET", "", "max")
+  #if $week.ET.has_data and $week.ET.sum.raw != None and $week.ET.sum.raw > 0.0
+  $getChartJsCode("ET", "ETchart", "bar", "ET", "", "sum")
   #end if
 
   #if $week.radiation.has_data
@@ -332,6 +371,18 @@ new ApexCharts(document.querySelector('#$id'), {
 
   #if $week.cloudbase.has_data
   $getChartJsCode("cloudbase", "cloudbasechart", "area", "cloudbase", "avg")
+  #end if
+
+  #if $week.pm2_5.has_data
+  $getChartJsCode("pm2_5", "pm2_5chart", "area", "pm2_5", "avg")
+  #end if
+
+  #if $week.lightning_distance.has_data
+  $getChartJsCode("lightning_distance", "lightning_distancechart", "bar", "lightning_distance", "max")
+  #end if
+
+  #if $week.lightning_strike_count.has_data
+  $getChartJsCode("lightning_strike_count", "lightning_strike_countchart", "bar", "lightning_strike_count", "sum")
   #end if
 
   // Build wind vector chart

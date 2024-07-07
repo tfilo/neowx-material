@@ -16,7 +16,7 @@
           $getVar('obs.label.' + name)
 
 
-          #if $name in $Extras.Appearance.show_trend_on and $getVar('trend.' + name + '.raw') is not None
+          #if $name in $Extras.Appearance.show_trend_on and $getVar('trend.' + name + '.raw') != None
 
             #if $getVar('trend.' + name + '.raw') > 0.1
             <i class="wi wi-direction-up-right"
@@ -76,6 +76,52 @@
           </div>
         </div>
 
+        #else if $name == 'lightning_strike_count'
+
+        <div class="row">
+          <div class="col-3 text-muted font-small"></div>
+          <div class="col-6">
+            <h4 class="h2-responsive">$day.lightning_strike_count.sum</h4>
+          </div>
+          <div class="col-3 text-muted font-small hi-text"></div>
+        </div>
+
+        #else if $name == 'lightning_distance'
+
+        <div class="row">
+          <div class="col-3 text-muted font-small lo-text">
+            $getVar('day.' + name + '.min') <br>
+            ($getVar('day.' + name + '.mintime').format($Extras.Formatting.datetime_today))
+          </div>
+          <div class="col-6">
+            <h4 class="h2-responsive">$day.lightning_distance.avg</h4>
+          </div>
+          <div class="col-3 text-muted font-small hi-text">
+            $getVar('day.' + name + '.max') <br>
+            ($getVar('day.' + name + '.maxtime').format($Extras.Formatting.datetime_today))
+          </div>
+        </div>
+
+        #else if $name == 'windrun'
+
+        <div class="row">
+          <div class="col-3 text-muted font-small"></div>
+          <div class="col-6">
+            <h4 class="h2-responsive">$day.windrun.sum</h4>
+          </div>
+          <div class="col-3 text-muted font-small hi-text"></div>
+        </div>
+
+        #else if $name == 'ET'
+
+        <div class="row">
+          <div class="col-3 text-muted font-small"></div>
+          <div class="col-6">
+            <h4 class="h2-responsive">$day.ET.sum</h4>
+          </div>
+          <div class="col-3 text-muted font-small hi-text"></div>
+        </div>
+
         #else
 
         <div class="row">
@@ -106,7 +152,7 @@
 ## +-------------------------------------------------------------------------+
 
 #def chartCard($name, $id, $name2 = "XX")
-  #if ($getVar('day.' + name + '.has_data') or $name == "windvec") and $name != "appTemp"
+  #if ($getVar('day.' + name + '.has_data') or $name == "windvec") and $name != "appTemp" and $name != "ET" and $name != "windrun"
     <div class="col-12 col-xl-6 mb-4">
       <div class="card">
         <div class="card-body text-center">
@@ -149,7 +195,7 @@
       #for $x in $Extras.Appearance.values_order
 
       #if $x == "ET"
-        #if $day.ET.has_data and $day.ET.sum.raw is not None and $day.ET.sum.raw > 0.0
+        #if $day.ET.has_data and $day.ET.sum.raw != None and $day.ET.sum.raw > 0.0
           $valuesCard('ET')
         #end if
       #else
@@ -165,7 +211,7 @@
       #for $x in $Extras.Appearance.charts_order
 
       #if $x == "ET"
-        #if $day.ET.has_data and $day.ET.sum.raw is not None and $day.ET.sum.raw > 0.0
+        #if $day.ET.has_data and $day.ET.sum.raw != None and $day.ET.sum.raw > 0.0
           $chartCard($x, $x + 'chart')
         #end if
       #else
@@ -311,10 +357,6 @@ new ApexCharts(document.querySelector('#$id'), {
   $getChartJsCode("UV", "UVchart", "area", "UV", "", "max")
   #end if
 
-  #if $day.ET.has_data and $day.ET.sum.raw is not None and $day.ET.sum.raw > 0.0
-  $getChartJsCode("ET", "ETchart", "area", "ET", "", "max")
-  #end if
-
   #if $day.radiation.has_data
   $getChartJsCode("radiation", "radiationchart", "area", "radiation", "", "max")
   #end if
@@ -342,6 +384,18 @@ new ApexCharts(document.querySelector('#$id'), {
 
   #if $day.cloudbase.has_data
   $getChartJsCode("cloudbase", "cloudbasechart", "area", "cloudbase", "avg")
+  #end if
+
+  #if $day.pm2_5.has_data
+  $getChartJsCode("pm2_5", "pm2_5chart", "area", "pm2_5", "avg")
+  #end if
+
+  #if $day.lightning_distance.has_data
+  $getChartJsCode("lightning_distance", "lightning_distancechart", "bar", "lightning_distance", "max")
+  #end if
+
+  #if $day.lightning_strike_count.has_data
+  $getChartJsCode("lightning_strike_count", "lightning_strike_countchart", "bar", "lightning_strike_count", "sum")
   #end if
 
   // Build wind vector chart

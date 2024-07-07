@@ -1,6 +1,6 @@
 {
-  "name": "Weewx weather",
-  "short_name": "Weather",
+  "name": "Počasie Rajecké Teplice",
+  "short_name": "Počasie RT",
   "icons": [{
     "src": "img/icon-48.png",
     "sizes": "48x48",

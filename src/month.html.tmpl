@@ -9,6 +9,11 @@
 ## | Template for display card of values (left column)                       |
 ## +-------------------------------------------------------------------------+
 
+#set $ArkticD =(-10.0,"degree_C")
+#set $TropicN =(20.0,"degree_C")
+#set $TropicD =(30.0,"degree_C")
+#set $SummerD =(25.0,"degree_C")
+
 #def valuesCard($name)
   #if $getVar('month.' + name + '.has_data')
   <div class="col-12 col-md-6 col-xl-4 mb-4">
@@ -57,6 +62,36 @@
             $month.rainRate.max <br>
             ($month.rainRate.maxtime.format($Extras.Formatting.datetime))
           </div>
+        </div>
+
+        #else if $name == 'lightning_strike_count'
+
+        <div class="row">
+          <div class="col-3 text-muted font-small"></div>
+          <div class="col-6">
+            <h4 class="h2-responsive">$month.lightning_strike_count.sum</h4>
+          </div>
+          <div class="col-3 text-muted font-small hi-text"></div>
+        </div>
+
+        #else if $name == 'windrun'
+
+        <div class="row">
+          <div class="col-3 text-muted font-small"></div>
+          <div class="col-6">
+            <h4 class="h2-responsive">$month.windrun.sum</h4>
+          </div>
+          <div class="col-3 text-muted font-small hi-text"></div>
+        </div>
+
+        #else if $name == 'ET'
+
+        <div class="row">
+          <div class="col-3 text-muted font-small"></div>
+          <div class="col-6">
+            <h4 class="h2-responsive">$month.ET.sum</h4>
+          </div>
+          <div class="col-3 text-muted font-small hi-text"></div>
         </div>
 
         #else
@@ -131,14 +166,88 @@
       #for $x in $Extras.Appearance.values_order
 
       #if $x == "ET"
-        #if $month.ET.has_data and $month.ET.sum.raw is not None and $month.ET.sum.raw > 0.0
+        #if $month.ET.has_data and $month.ET.sum.raw != None and $month.ET.sum.raw > 0.0
           $valuesCard('ET')
         #end if
+      #else if $x == "dayTypes"
+        <div class="col-12 col-md-6 col-xl-4 mb-4">
+          <div class="card">
+            <div class="card-body text-center">
+              <h3 class="h5-responsive $Extras.color-text">
+                $Extras.Translations[$Extras.language].artic_days
+              </h3>
+              <div class="row">
+                <div class="col-3 text-muted font-small"></div>
+                <div class="col-6">
+                  <h4 class="h2-responsive">
+                    $month.outTemp.max_le($ArkticD).nolabel("%6d", " N/A")
+                  </h4>
+                </div>
+                <div class="col-3 text-muted font-small hi-text"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-12 col-md-6 col-xl-4 mb-4">
+          <div class="card">
+            <div class="card-body text-center">
+              <h3 class="h5-responsive $Extras.color-text">
+                $Extras.Translations[$Extras.language].tropical_days
+              </h3>
+              <div class="row">
+                <div class="col-3 text-muted font-small"></div>
+                <div class="col-6">
+                  <h4 class="h2-responsive">
+                    $month.outTemp.max_ge($TropicD).nolabel("%6d", " N/A")
+                  </h4>
+                </div>
+                <div class="col-3 text-muted font-small hi-text"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-12 col-md-6 col-xl-4 mb-4">
+          <div class="card">
+            <div class="card-body text-center">
+              <h3 class="h5-responsive $Extras.color-text">
+                $Extras.Translations[$Extras.language].tropical_nights
+              </h3>
+              <div class="row">
+                <div class="col-3 text-muted font-small"></div>
+                <div class="col-6">
+                  <h4 class="h2-responsive">
+                    $month.outTemp.min_ge($TropicN).nolabel("%6d", " N/A")
+                  </h4>
+                </div>
+                <div class="col-3 text-muted font-small hi-text"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-12 col-md-6 col-xl-4 mb-4">
+          <div class="card">
+            <div class="card-body text-center">
+              <h3 class="h5-responsive $Extras.color-text">
+                $Extras.Translations[$Extras.language].summer_days
+              </h3>
+              <div class="row">
+                <div class="col-3 text-muted font-small"></div>
+                <div class="col-6">
+                  <h4 class="h2-responsive">
+                    $month.outTemp.max_ge($SummerD).nolabel("%6d", " N/A")
+                  </h4>
+                </div>
+                <div class="col-3 text-muted font-small hi-text"></div>
+              </div>
+            </div>
+          </div>
+        </div>
       #else
         $valuesCard($x)
       #end if
 
       #end for
+
     </div>
 
     <hr class="my-4 rowdivider">
@@ -147,7 +256,7 @@
       #for $x in $Extras.Appearance.charts_order
 
       #if $x == "ET"
-        #if $month.ET.has_data and $month.ET.sum.raw is not None and $month.ET.sum.raw > 0.0
+        #if $month.ET.has_data and $month.ET.sum.raw != None and $month.ET.sum.raw > 0.0
           $chartCard($x, $x + 'chart')
         #end if
       #else
@@ -178,6 +287,12 @@
   #set current_interval = int($Extras.Charts.month_timespan)
   #if $name == "rain"
     #set current_interval = int($Extras.Charts.month_rain_timespan)
+  #end if
+  #if $name == "ET"
+    #set current_interval = int($Extras.Charts.month_ET_timespan)
+  #end if
+  #if $name == "windrun"
+    #set current_interval = int($Extras.Charts.month_windrun_timespan)
   #end if
 
   #for $record in $span($day_delta=31).spans(interval=current_interval)
@@ -285,6 +400,9 @@ new ApexCharts(document.querySelector('#$id'), {
   // Wind
   $getChartJsCode("windSpeed", "windSpeedchart", "area", "windSpeed", "windGust", "max")
 
+  // WindRun
+  $getChartJsCode("windrun", "windrunchart", "bar", "windrun", "", "sum")
+
   // outHumidity
   $getChartJsCode("outHumidity", "outHumiditychart", "area", "outHumidity")
 
@@ -293,8 +411,8 @@ new ApexCharts(document.querySelector('#$id'), {
   $getChartJsCode("UV", "UVchart", "area", "UV", "", "max")
   #end if
 
-  #if $month.ET.has_data and $month.ET.sum.raw is not None and $month.ET.sum.raw > 0.0
-  $getChartJsCode("ET", "ETchart", "area", "ET", "", "max")
+  #if $month.ET.has_data and $month.ET.sum.raw != None and $month.ET.sum.raw > 0.0
+  $getChartJsCode("ET", "ETchart", "bar", "ET", "", "sum")
   #end if
 
   #if $month.radiation.has_data
@@ -332,6 +450,18 @@ new ApexCharts(document.querySelector('#$id'), {
 
   #if $month.cloudbase.has_data
   $getChartJsCode("cloudbase", "cloudbasechart", "area", "cloudbase", "avg")
+  #end if
+
+  #if $month.pm2_5.has_data
+  $getChartJsCode("pm2_5", "pm2_5chart", "area", "pm2_5", "avg")
+  #end if
+
+  #if $month.lightning_distance.has_data
+  $getChartJsCode("lightning_distance", "lightning_distancechart", "bar", "lightning_distance", "max")
+  #end if
+
+  #if $month.lightning_strike_count.has_data
+  $getChartJsCode("lightning_strike_count", "lightning_strike_countchart", "bar", "lightning_strike_count", "sum")
   #end if
 
   // Build wind vector chart

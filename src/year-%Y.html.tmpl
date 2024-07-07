@@ -9,6 +9,11 @@
 ## | Template for display card of values (left column)                       |
 ## +-------------------------------------------------------------------------+
 
+#set $ArkticD =(-10.0,"degree_C")
+#set $TropicN =(20.0,"degree_C")
+#set $TropicD =(30.0,"degree_C")
+#set $SummerD =(25.0,"degree_C")
+
 #def valuesCard($name)
   #if $getVar('year.' + name + '.has_data')
   <div class="col-12 col-lg-6 mb-4">
@@ -57,6 +62,36 @@
             $year.rainRate.max <br>
             ($year.rainRate.maxtime.format($Extras.Formatting.datetime_archive))
           </div>
+        </div>
+
+        #else if $name == 'lightning_strike_count'
+
+        <div class="row">
+          <div class="col-3 text-muted font-small"></div>
+          <div class="col-6">
+            <h4 class="h2-responsive">$year.lightning_strike_count.sum</h4>
+          </div>
+          <div class="col-3 text-muted font-small hi-text"></div>
+        </div>
+
+        #else if $name == 'windrun'
+
+        <div class="row">
+          <div class="col-3 text-muted font-small"></div>
+          <div class="col-6">
+            <h4 class="h2-responsive">$year.windrun.sum</h4>
+          </div>
+          <div class="col-3 text-muted font-small hi-text"></div>
+        </div>
+
+        #else if $name == 'ET'
+
+        <div class="row">
+          <div class="col-3 text-muted font-small"></div>
+          <div class="col-6">
+            <h4 class="h2-responsive">$year.ET.sum</h4>
+          </div>
+          <div class="col-3 text-muted font-small hi-text"></div>
         </div>
 
         #else
@@ -182,9 +217,82 @@
       #for $x in $Extras.Appearance.values_order
 
       #if $x == "ET"
-        #if $year.ET.has_data and $year.ET.sum.raw is not None and $year.ET.sum.raw > 0.0
+        #if $year.ET.has_data and $year.ET.sum.raw != None and $year.ET.sum.raw > 0.0
           $valuesCard('ET')
         #end if
+      #else if $x == "dayTypes"
+        <div class="col-12 col-lg-6 mb-4">
+          <div class="card">
+            <div class="card-body text-center">
+              <h3 class="h5-responsive $Extras.color-text">
+                $Extras.Translations[$Extras.language].artic_days
+              </h3>
+              <div class="row">
+                <div class="col-3 text-muted font-small"></div>
+                <div class="col-6">
+                  <h4 class="h2-responsive">
+                    $year.outTemp.max_le($ArkticD).nolabel("%6d", " N/A")
+                  </h4>
+                </div>
+                <div class="col-3 text-muted font-small hi-text"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-12 col-lg-6 mb-4">
+          <div class="card">
+            <div class="card-body text-center">
+              <h3 class="h5-responsive $Extras.color-text">
+                $Extras.Translations[$Extras.language].tropical_days
+              </h3>
+              <div class="row">
+                <div class="col-3 text-muted font-small"></div>
+                <div class="col-6">
+                  <h4 class="h2-responsive">
+                    $year.outTemp.max_ge($TropicD).nolabel("%6d", " N/A")
+                  </h4>
+                </div>
+                <div class="col-3 text-muted font-small hi-text"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-12 col-lg-6 mb-4">
+          <div class="card">
+            <div class="card-body text-center">
+              <h3 class="h5-responsive $Extras.color-text">
+                $Extras.Translations[$Extras.language].tropical_nights
+              </h3>
+              <div class="row">
+                <div class="col-3 text-muted font-small"></div>
+                <div class="col-6">
+                  <h4 class="h2-responsive">
+                    $year.outTemp.min_ge($TropicN).nolabel("%6d", " N/A")
+                  </h4>
+                </div>
+                <div class="col-3 text-muted font-small hi-text"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-12 col-lg-6 mb-4">
+          <div class="card">
+            <div class="card-body text-center">
+              <h3 class="h5-responsive $Extras.color-text">
+                $Extras.Translations[$Extras.language].summer_days
+              </h3>
+              <div class="row">
+                <div class="col-3 text-muted font-small"></div>
+                <div class="col-6">
+                  <h4 class="h2-responsive">
+                    $year.outTemp.max_ge($SummerD).nolabel("%6d", " N/A")
+                  </h4>
+                </div>
+                <div class="col-3 text-muted font-small hi-text"></div>
+              </div>
+            </div>
+          </div>
+        </div>
       #else
         $valuesCard($x)
       #end if
@@ -198,7 +306,7 @@
       #for $x in $Extras.Appearance.charts_order
 
       #if $x == "ET"
-        #if $year.ET.has_data and $year.ET.sum.raw is not None and $year.ET.sum.raw > 0.0
+        #if $year.ET.has_data and $year.ET.sum.raw != None and $year.ET.sum.raw > 0.0
           $chartCard($x, $x + 'chart')
         #end if
       #else
@@ -378,6 +486,9 @@ new ApexCharts(document.querySelector('#$id'), {
   // Wind
   $getChartJsCode("windSpeed", "windSpeedchart", "area", "windSpeed", "windGust", "max")
 
+  // WindRun
+  $getChartJsCode("windrun", "windrunchart", "bar", "windrun", "", "sum")
+  
   // outHumidity
   $getChartJsCode("outHumidity", "outHumiditychart", "area", "outHumidity")
 
@@ -386,8 +497,8 @@ new ApexCharts(document.querySelector('#$id'), {
   $getChartJsCode("UV", "UVchart", "area", "UV", "", "max")
   #end if
 
-  #if $year.ET.has_data and $year.ET.sum.raw is not None and $year.ET.sum.raw > 0.0
-  $getChartJsCode("ET", "ETchart", "area", "ET", "", "max")
+  #if $year.ET.has_data and $year.ET.sum.raw != None and $year.ET.sum.raw > 0.0
+  $getChartJsCode("ET", "ETchart", "bar", "ET", "", "sum")
   #end if
 
   #if $year.radiation.has_data
@@ -425,6 +536,18 @@ new ApexCharts(document.querySelector('#$id'), {
 
   #if $year.cloudbase.has_data
   $getChartJsCode("cloudbase", "cloudbasechart", "area", "cloudbase", "avg")
+  #end if
+
+  #if $year.pm2_5.has_data
+  $getChartJsCode("pm2_5", "pm2_5chart", "area", "pm2_5", "avg")
+  #end if
+
+  #if $year.lightning_distance.has_data
+  $getChartJsCode("lightning_distance", "lightning_distancechart", "bar", "lightning_distance", "max")
+  #end if
+
+  #if $year.lightning_strike_count.has_data
+  $getChartJsCode("lightning_strike_count", "lightning_strike_countchart", "bar", "lightning_strike_count", "sum")
   #end if
 
   // Build wind vector chart
