@@ -20,20 +20,14 @@ jobs:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
         cache-dependency-path: './src/package-lock.json'
-    - name: Install zip
-      run: |
-        apt-get update
-        apt-get install -y zip
-        rm -rf /var/lib/apt/lists/* 
     - name: Build
       run: |
         npm install
         npm run build
-        npm run create-zip
       working-directory: src
     - name: Upload release binaries
       uses: alexellis/upload-assets@0.4.0
       env:
         GITHUB_TOKEN: ${{ github.token }}
       with:
-        asset_paths: '["dist/neowx-material-latest.zip"]'
+        asset_paths: '["dist/*"]'
