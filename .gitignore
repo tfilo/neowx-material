@@ -10,4 +10,5 @@ __pycache__/
 /skins/neowx-material/skin.conf.patch
 /todo.md
 /.superpowers/
+/.agents/
 /tests/
