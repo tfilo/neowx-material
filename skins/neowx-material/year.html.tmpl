@@ -561,6 +561,10 @@
                 $getChartJsCode("soilMoist1", "soilMoist1chart", "area", "soilMoist1", "soilMoist2", "avg", "soilMoist3", "soilMoist4")
             #end if
 
+            #if $year.soilEC1.has_data or $year.soilEC2.has_data or $year.soilEC3.has_data or $year.soilEC4.has_data
+                $getChartJsCode("soilEC1", "soilEC1chart", "area", "soilEC1", "soilEC2", "avg", "soilEC3", "soilEC4")
+            #end if
+
             #if $year.cloudbase.has_data
                 $getChartJsCode("cloudbase", "cloudbasechart", "area", "cloudbase", "avg")
             #end if
